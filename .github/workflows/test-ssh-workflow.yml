@@ -1,0 +1,17 @@
+name: test-ssh-workflow
+on: workflow_dispatch
+      
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy the website
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/staging.key
+          chmod 600 ~/.ssh/staging.key
+          ssh -vvv -i ~/.ssh/staging.key -o StrictHostKeyChecking=no -o ConnectTimeout=15 $SSH_USER@$SSH_HOST 'ls -lah'
