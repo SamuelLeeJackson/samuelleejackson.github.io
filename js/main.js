@@ -1,89 +1,53 @@
-$(document).ready(function() {
+/* main.js — no jQuery, no Bootstrap */
 
-  // Scroll to top button ----------------------------------------------------------
-  // When the user scrolls down 20px from the top of the document, show the button
-  window.onscroll = function() {
-    scrollFunction()
-  };
+(function () {
+  'use strict';
 
-  function scrollFunction() {
-    if (document.body.scrollTop > 350 || document.documentElement.scrollTop > 350) {
-      document.getElementById("topper").style.display = "block";
-    } else {
-      document.getElementById("topper").style.display = "none";
-    }
+  /* ── Nav: raise on scroll ───────────────────────────────── */
+  var nav = document.getElementById('site-nav');
+  if (nav) {
+    window.addEventListener('scroll', function () {
+      nav.classList.toggle('raised', window.scrollY > 10);
+    }, { passive: true });
   }
 
-  // When the user clicks on the button, scroll to the top of the document
-  function topFunction() {
-    document.body.scrollTop = 0; // For Safari
-    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+  /* ── Mobile nav toggle ──────────────────────────────────── */
+  var toggle = document.getElementById('nav-toggle');
+  var links  = document.getElementById('nav-links');
+  if (toggle && links) {
+    toggle.addEventListener('click', function () {
+      var open = links.classList.toggle('open');
+      toggle.classList.toggle('open', open);
+      toggle.setAttribute('aria-expanded', open);
+    });
+    links.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', function () {
+        links.classList.remove('open');
+        toggle.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+    });
   }
 
-  $("#topper").on("click", function() {
-    $("html").animate({
-      scrollTop: 0
-    }, 400);
+  /* ── Accordion ──────────────────────────────────────────── */
+  document.querySelectorAll('.acc-trigger').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var expanded = btn.getAttribute('aria-expanded') === 'true';
+      var panel    = btn.nextElementSibling;
+      btn.setAttribute('aria-expanded', !expanded);
+      panel.classList.toggle('open', !expanded);
+    });
   });
 
-  // tooltips function
-  $(function() {
-    $('[data-toggle="tooltip"]').tooltip()
-  })
+  /* ── Back to top ────────────────────────────────────────── */
+  var backTop = document.getElementById('back-top');
+  if (backTop) {
+    window.addEventListener('scroll', function () {
+      backTop.classList.toggle('visible', window.scrollY > 400);
+    }, { passive: true });
+    backTop.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
 
-  // Initally hide the read more div
-     $("#read-more").css("display", "none");
-
-     // Show more on click
-     $("#badge-more").on("click", function() {
-
-        // Show/hide the div
-        $("#read-more").fadeToggle("fast");
-
-        // Change the button
-        if ($("#badge-more").text() == "more") {
-           $("#badge-more").text("less");
-        } else {
-           $("#badge-more").text("more");
-        }
-
-     });
-
-     // popover function
-     $('[data-toggle="popover"]').popover();
-
-     // open all accordion panels for possible rinting
-     // $(".expander").on("click", function() {
-     //
-     //    // Change the button
-     //    if ($(".expander").text() == "show all") {
-     //       $(".expander").text("hide all");
-     //       $(".panel-collapse").addClass("in");
-     //       $(".panel-default a").attr("aria-expanded", "true").removeClass("collapsed");
-     //    } else {
-     //       $(".expander").text("show all");
-     //       $(".panel-collapse").removeClass("in");
-     //       $(".panel-default a").attr("aria-expanded", "false").addClass("collapsed");
-     //    }
-     //
-     // });
-
-     // open all accordion panels for possible printing or close
-   $(".expander").on("click", function() {
-
-      if ($(".expander").text() === "show all") {
-
-        // Change the button text
-         $(".expander").text("hide all");
-         // show all accordions
-         $(".panel-collapse").collapse('show');
-
-      } else {
-        // Change the button text
-         $(".expander").text("show all");
-         // hide all accordions
-         $(".panel-collapse").collapse('hide');
-      }
-   });
-
-});
+})();
